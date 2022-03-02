@@ -808,13 +808,6 @@ extension GetNavigationExt on GetInterface {
       return;
     }
 
-    //TODO: This code brings compatibility of the new snackbar with GetX 4,
-    // remove this code in version 5
-    if (isSnackbarOpen && !closeOverlays) {
-      closeCurrentSnackbar();
-      return;
-    }
-
     if (closeOverlays && isOverlaysOpen) {
       //TODO: This code brings compatibility of the new snackbar with GetX 4,
       // remove this code in version 5
