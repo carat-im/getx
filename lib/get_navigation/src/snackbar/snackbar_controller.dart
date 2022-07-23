@@ -267,9 +267,11 @@ class SnackbarController {
   }
 
   Widget _getSnackbarContainer(Widget child) {
-    return Container(
-      margin: snackbar.margin,
-      child: child,
+    return IgnorePointer(
+      child: Container(
+        margin: snackbar.margin,
+        child: child,
+      ),
     );
   }
 
