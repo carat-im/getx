@@ -233,8 +233,11 @@ class SnackbarController {
       return GestureDetector(
         child: snackbar,
         onTap: snackbar.onTap != null
-            ? () => snackbar.onTap?.call(snackbar)
-            : null,
+          ? () {
+          snackbar.onTap?.call(snackbar);
+          close();
+        }
+          : null,
       );
     });
   }
@@ -267,11 +270,9 @@ class SnackbarController {
   }
 
   Widget _getSnackbarContainer(Widget child) {
-    return IgnorePointer(
-      child: Container(
-        margin: snackbar.margin,
-        child: child,
-      ),
+    return Container(
+      margin: snackbar.margin,
+      child: child,
     );
   }
 
