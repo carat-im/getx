@@ -210,7 +210,7 @@ class PageRedirect {
       opaque: _r.opaque,
       showCupertinoParallax: _r.showCupertinoParallax,
       gestureWidth: _r.gestureWidth,
-      customTransition: _r.customTransition,
+      customTransitionBuilder: _r.customTransitionBuilder,
       binding: _r.binding,
       bindings: _r.bindings,
       transitionDuration:
@@ -239,7 +239,7 @@ class PageRedirect {
       showCupertinoParallax: _r.showCupertinoParallax,
       gestureWidth: _r.gestureWidth,
       opaque: _r.opaque,
-      customTransition: _r.customTransition,
+      customTransitionBuilder: _r.customTransitionBuilder,
       binding: _r.binding,
       bindings: _r.bindings,
       transitionDuration:

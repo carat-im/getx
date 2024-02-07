@@ -383,7 +383,8 @@ Cannot read the previousTitle for a route that has not yet been installed''',
         linearTransition: linearTransition,
       );
     } else {
-      if (route.customTransition != null) {
+      if (route.customTransitionBuilder != null) {
+        route.customTransition ??= route.customTransitionBuilder!.call();
         return route.customTransition!.buildTransition(
           context,
           finalCurve,

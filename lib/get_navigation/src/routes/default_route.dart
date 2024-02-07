@@ -34,7 +34,7 @@ class GetPageRoute<T> extends PageRoute<T>
     this.alignment,
     this.transition,
     this.popGesture,
-    this.customTransition,
+    this.customTransitionBuilder,
     this.barrierDismissible = false,
     this.barrierColor,
     this.binding,
@@ -54,7 +54,7 @@ class GetPageRoute<T> extends PageRoute<T>
   final GetPageBuilder? page;
   final String? routeName;
   //final String reference;
-  final CustomTransition? customTransition;
+  final CustomTransitionBuilder? customTransitionBuilder;
   final Bindings? binding;
   final Map<String, String>? parameter;
   final List<Bindings>? bindings;
@@ -110,6 +110,8 @@ class GetPageRoute<T> extends PageRoute<T>
     _child = middlewareRunner.runOnPageBuilt(pageToBuild());
     return _child!;
   }
+
+  CustomTransition? customTransition;
 
   @override
   Widget buildContent(BuildContext context) {

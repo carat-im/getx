@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 
 enum Transition {
   fade,
@@ -20,3 +21,5 @@ enum Transition {
 }
 
 typedef GetPageBuilder = Widget Function();
+
+typedef CustomTransitionBuilder = CustomTransition Function();

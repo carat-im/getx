@@ -19,7 +19,7 @@ class GetPage<T> extends Page<T> {
   final double Function(BuildContext context)? gestureWidth;
   final Bindings? binding;
   final List<Bindings> bindings;
-  final CustomTransition? customTransition;
+  final CustomTransitionBuilder? customTransitionBuilder;
   final Duration? transitionDuration;
   final bool fullscreenDialog;
   final bool preventDuplicates;
@@ -58,7 +58,7 @@ class GetPage<T> extends Page<T> {
     this.binding,
     this.bindings = const [],
     this.transition,
-    this.customTransition,
+    this.customTransitionBuilder,
     this.fullscreenDialog = false,
     this.children = const <GetPage>[],
     this.middlewares,
@@ -89,7 +89,7 @@ class GetPage<T> extends Page<T> {
     bool? opaque,
     Bindings? binding,
     List<Bindings>? bindings,
-    CustomTransition? customTransition,
+    CustomTransitionBuilder? customTransitionBuilder,
     Duration? transitionDuration,
     bool? fullscreenDialog,
     RouteSettings? settings,
@@ -118,7 +118,7 @@ class GetPage<T> extends Page<T> {
       opaque: opaque ?? this.opaque,
       binding: binding ?? this.binding,
       bindings: bindings ?? this.bindings,
-      customTransition: customTransition ?? this.customTransition,
+      customTransitionBuilder: customTransitionBuilder ?? this.customTransitionBuilder,
       transitionDuration: transitionDuration ?? this.transitionDuration,
       fullscreenDialog: fullscreenDialog ?? this.fullscreenDialog,
       children: children ?? this.children,
