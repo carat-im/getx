@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import 'package:collection/collection.dart';
 import '../../../../get_core/get_core.dart';
 import '../../../../instance_manager.dart';
 import '../../../get_navigation.dart';
@@ -33,6 +34,8 @@ class GetObserver extends NavigatorObserver {
 
   final Routing? _routeSend;
 
+  final List<String> routeNamesStack = [];
+
   GetObserver([this.routing, this._routeSend]);
 
   @override
@@ -40,11 +43,6 @@ class GetObserver extends NavigatorObserver {
     super.didPop(route, previousRoute);
     final currentRoute = _RouteData.ofRoute(route);
     final newRoute = _RouteData.ofRoute(previousRoute);
-
-    // if (currentRoute.isSnackbar) {
-    //   // Get.log("CLOSE SNACKBAR ${currentRoute.name}");
-    //   Get.log("CLOSE SNACKBAR");
-    // } else
 
     if (currentRoute.isBottomSheet || currentRoute.isDialog) {
       Get.log("CLOSE ${currentRoute.name}");
@@ -76,7 +74,17 @@ class GetObserver extends NavigatorObserver {
       value.isDialog = newRoute.isDialog;
     });
 
-    // print('currentRoute.isDialog ${currentRoute.isDialog}');
+    final removeIndex = routeNamesStack.lastIndexOf(currentRoute.name ?? '');
+    if (removeIndex >= 0) {
+      routeNamesStack.removeAt(removeIndex);
+    }
+
+    if (routeNamesStack.length > 1) {
+      _routeSend?.update((value) {
+        value.current = routeNamesStack.last;
+        value.previous = routeNamesStack[routeNamesStack.length - 2];
+      });
+    }
 
     routing?.call(_routeSend);
   }
@@ -117,9 +125,18 @@ class GetObserver extends NavigatorObserver {
       value.isDialog = newRoute.isDialog ? true : value.isDialog ?? false;
     });
 
-    if (routing != null) {
-      routing!(_routeSend);
+    if (_routeSend?.current != null && routeNamesStack.lastOrNull != _routeSend!.current) {
+      routeNamesStack.add(_routeSend!.current);
     }
+
+    if (routeNamesStack.length > 1) {
+      _routeSend?.update((value) {
+        value.current = routeNamesStack.last;
+        value.previous = routeNamesStack[routeNamesStack.length - 2];
+      });
+    }
+
+    routing?.call(_routeSend);
   }
 
   @override
@@ -144,6 +161,19 @@ class GetObserver extends NavigatorObserver {
     if (route is GetPageRoute) {
       RouterReportManager.reportRouteWillDispose(route);
     }
+
+    final removeIndex = routeNamesStack.lastIndexOf(currentRoute.name ?? '');
+    if (removeIndex >= 0) {
+      routeNamesStack.removeAt(removeIndex);
+    }
+
+    if (routeNamesStack.length > 1) {
+      _routeSend?.update((value) {
+        value.current = routeNamesStack.last;
+        value.previous = routeNamesStack[routeNamesStack.length - 2];
+      });
+    }
+
     routing?.call(_routeSend);
   }
 
@@ -179,6 +209,20 @@ class GetObserver extends NavigatorObserver {
     });
     if (oldRoute is GetPageRoute) {
       RouterReportManager.reportRouteWillDispose(oldRoute);
+    }
+
+    if (oldName != null && newName != null) {
+      final removeIndex = routeNamesStack.lastIndexOf(oldName);
+      if (removeIndex >= 0) {
+        routeNamesStack[removeIndex] = newName;
+      }
+
+      if (routeNamesStack.length > 1) {
+        _routeSend?.update((value) {
+          value.current = routeNamesStack.last;
+          value.previous = routeNamesStack[routeNamesStack.length - 2];
+        });
+      }
     }
 
     routing?.call(_routeSend);
