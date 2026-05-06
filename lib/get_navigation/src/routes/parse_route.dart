@@ -17,7 +17,7 @@ class RouteDecoder {
     final decoder = Get.routeTree.matchRoute(location, arguments: args);
     decoder.route = decoder.route?.copy(
       completer: null,
-      arguments: args,
+      arguments: args.arguments,
       parameters: args.params,
     );
     return decoder;

@@ -665,7 +665,7 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
 
     decoder.route = decoder.route?.copy(
       completer: _activePages.isEmpty ? null : Completer(),
-      arguments: arguments,
+      arguments: arguments.arguments,
       parameters: parameters,
       key: ValueKey(arguments.name),
     );
