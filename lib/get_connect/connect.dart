@@ -322,11 +322,11 @@ class GetConnect extends GetConnectInterface {
                 .toList());
       }
       return GraphQLResponse<T>.fromResponse(res);
-    } on Exception catch (_) {
+    } on Exception catch (e) {
       return GraphQLResponse<T>(graphQLErrors: [
         GraphQLError(
           code: null,
-          message: _.toString(),
+          message: e.toString(),
         )
       ]);
     }
@@ -357,11 +357,11 @@ class GetConnect extends GetConnectInterface {
                 .toList());
       }
       return GraphQLResponse<T>.fromResponse(res);
-    } on Exception catch (_) {
+    } on Exception catch (e) {
       return GraphQLResponse<T>(graphQLErrors: [
         GraphQLError(
           code: null,
-          message: _.toString(),
+          message: e.toString(),
         )
       ]);
     }

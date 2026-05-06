@@ -239,7 +239,7 @@ class GetCupertinoApp extends StatelessWidget {
                 transitionDuration ?? Get.defaultTransitionDuration,
           );
         },
-        builder: (_) {
+        builder: (controller) {
           final routerDelegate = Get.createDelegate(
               pages: getPages ?? [],
               notFoundRoute: unknownRoute,
@@ -263,7 +263,7 @@ class GetCupertinoApp extends StatelessWidget {
             routeInformationParser: routeInformationParser,
             backButtonDispatcher: backButtonDispatcher,
             routeInformationProvider: routeInformationProvider,
-            key: _.unikey,
+            key: controller.unikey,
             theme: theme,
             builder: defaultBuilder,
             title: title,

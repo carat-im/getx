@@ -256,7 +256,7 @@ class GetMaterialApp extends StatelessWidget {
               transitionDuration ?? Get.defaultTransitionDuration,
         );
       },
-      builder: (_) {
+      builder: (controller) {
         final routerDelegate = Get.createDelegate(
             pages: getPages ?? [],
             notFoundRoute: unknownRoute,
@@ -278,16 +278,16 @@ class GetMaterialApp extends StatelessWidget {
           routeInformationParser: routeInformationParser,
           backButtonDispatcher: backButtonDispatcher,
           routeInformationProvider: routeInformationProvider,
-          key: _.unikey,
+          key: controller.unikey,
           builder: defaultBuilder,
           title: title,
           onGenerateTitle: onGenerateTitle,
           color: color,
-          theme: _.theme ?? theme ?? ThemeData.fallback(),
-          darkTheme: _.darkTheme ?? darkTheme ?? theme ?? ThemeData.fallback(),
-          themeMode: _.themeMode ?? themeMode,
+          theme: controller.theme ???? theme ?? ThemeData.fallback(),
+          darkTheme: controller.darkTheme ???? darkTheme ?? theme ?? ThemeData.fallback(),
+          themeMode: controller.themeMode ???? themeMode,
           locale: Get.locale ?? locale,
-          scaffoldMessengerKey: scaffoldMessengerKey ?? _.scaffoldMessengerKey,
+          scaffoldMessengerKey: scaffoldMessengerKey ?? controller.scaffoldMessengerKey,
           localizationsDelegates: localizationsDelegates,
           localeListResolutionCallback: localeListResolutionCallback,
           localeResolutionCallback: localeResolutionCallback,

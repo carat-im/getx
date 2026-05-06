@@ -368,7 +368,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
     // match finger motions.
     final route = rawRoute as GetPageRoute<T>;
     final linearTransition =
-        CupertinoRouteTransitionMixin.isPopGestureInProgress(route);
+        route.popGestureInProgress;
     final finalCurve = route.curve ?? Get.defaultTransitionCurve;
     final hasCurve = route.curve != null;
     if (route.fullscreenDialog && route.transition == null) {
@@ -779,7 +779,7 @@ Cannot read the previousTitle for a route that has not yet been installed''',
       return false;
     }
     // If we're in a gesture already, we cannot start another.
-    if (CupertinoRouteTransitionMixin.isPopGestureInProgress(route)) {
+    if (route.popGestureInProgress) {
       return false;
     }
 
