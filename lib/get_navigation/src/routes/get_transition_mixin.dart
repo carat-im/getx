@@ -196,8 +196,15 @@ class GetBackGestureController<T> {
           duration: Duration(milliseconds: droppedPageForwardAnimationTime),
           curve: animationCurve);
     } else {
-      // This route is destined to pop at this point. Reuse navigator's pop.
-      Get.back();
+      // This route is destined to pop at this point. Pop the *local*
+      // navigator (the one that owns this route) — calling Get.back() here
+      // routes through the root delegate via searchDelegate(null), which
+      // for a nested route is the wrong target: the nested route lives in
+      // a child Navigator, not in root._activePages. The root delegate's
+      // canBack check (`_activePages.length > 1`) is then false, the pop
+      // becomes a no-op, the AnimationController stops where the user
+      // released, and the route freezes mid-swipe.
+      navigator.pop();
 
       // The popping may have finished inline if already at the
       // target destination.
