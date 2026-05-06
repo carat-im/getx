@@ -90,10 +90,15 @@ class SnackbarController {
   bool _isTesting = false;
 
   void _configureOverlay() {
-    final overlayContext = Get.overlayContext;
-    _isTesting = overlayContext == null;
-    _overlayState =
-        _isTesting ? OverlayState() : Overlay.of(Get.overlayContext!);
+    // Use NavigatorState.overlay directly instead of Overlay.of(Get.overlayContext!).
+    // Flutter 3.38's Overlay.of() walks ancestors from the _Theater context returned
+    // by Get.overlayContext and fails to find an OverlayState, so we go straight to
+    // the source: the navigator owns the OverlayState via its internal GlobalKey.
+    _overlayState = Get.key.currentState?.overlay;
+    _isTesting = _overlayState == null;
+    if (_isTesting) {
+      _overlayState = OverlayState();
+    }
     _overlayEntries.clear();
     _overlayEntries.addAll(_createOverlayEntries(_getBodyWidget()));
     if (!_isTesting) {
