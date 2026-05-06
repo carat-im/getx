@@ -228,7 +228,7 @@ extension StateExt<T> on StateMixin<T> {
     Widget? onEmpty,
     WidgetBuilder? onCustom,
   }) {
-    return Observer(builder: (_) {
+    return Observer(builder: (ctx) {
       if (status.isLoading) {
         return onLoading ?? const Center(child: CircularProgressIndicator());
       } else if (status.isError) {
@@ -242,7 +242,7 @@ extension StateExt<T> on StateMixin<T> {
       } else if (status.isSuccess) {
         return widget(value);
       } else if (status.isCustom) {
-        return onCustom?.call(status) ??
+        return onCustom?.call(ctx) ??
             SizedBox.shrink(); // Also can be widget(null); but is risky
       }
       return widget(value);
