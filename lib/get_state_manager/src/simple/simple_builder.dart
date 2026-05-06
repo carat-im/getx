@@ -103,6 +103,7 @@ mixin ObserverComponent on ComponentElement {
   Future<bool> _safeRebuild() async {
     if (dirty) return false;
     if (SchedulerBinding.instance == null) {
+      if (!mounted) return false;
       markNeedsBuild();
     } else {
       // refresh was called during the building
@@ -110,8 +111,10 @@ mixin ObserverComponent on ComponentElement {
         // Await for the end of build
         await SchedulerBinding.instance!.endOfFrame;
         if (dirty) return false;
+        if (!mounted) return false;
       }
 
+      if (!mounted) return false;
       markNeedsBuild();
     }
 
