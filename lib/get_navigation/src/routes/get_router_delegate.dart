@@ -637,10 +637,16 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
 
   @protected
   RouteDecoder? _getRouteDecoder<T>(PageSettings arguments) {
-    var page = arguments.uri.path;
+    var page = arguments.uri.toString();
     final parameters = arguments.params;
     if (parameters.isNotEmpty) {
-      final uri = Uri(path: page, queryParameters: parameters);
+      final uri = Uri(
+        path: arguments.uri.path,
+        queryParameters: {
+          ...arguments.uri.queryParameters,
+          ...parameters,
+        },
+      );
       page = uri.toString();
     }
 
