@@ -242,7 +242,7 @@ extension StateExt<T> on StateMixin<T> {
       } else if (status.isSuccess) {
         return widget(value);
       } else if (status.isCustom) {
-        return onCustom?.call(status) ????
+        return onCustom?.call(status) ??
             SizedBox.shrink(); // Also can be widget(null); but is risky
       }
       return widget(value);
