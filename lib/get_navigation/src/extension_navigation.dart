@@ -589,6 +589,20 @@ extension GetNavigationExt on GetInterface {
       page = uri.toString();
     }
 
+    if (id != null) {
+      // Nested navigation: dispatch via the nested Navigator's GlobalKey.
+      // GetDelegate.toNamed only updates _activePages and notifies listeners,
+      // which is fine for the root delegate (its build() renders the
+      // declarative Navigator(pages: ...)) but does nothing for nested
+      // delegates whose navigatorKey is bound to a user-supplied
+      // Navigator(onGenerateRoute: ...) widget. Pushing via that
+      // NavigatorState fires onGenerateRoute and actually mounts the route.
+      final state = searchDelegate(id).navigatorKey.currentState;
+      if (state != null) {
+        return state.pushNamed<T>(page, arguments: arguments);
+      }
+    }
+
     return searchDelegate(id).toNamed(
       page,
       arguments: arguments,
@@ -822,6 +836,15 @@ extension GetNavigationExt on GetInterface {
       // navigator?.popUntil((route) {
       //   return;
       // });
+    }
+    if (id != null) {
+      // Nested navigation: pop via the nested Navigator's GlobalKey.
+      // GetDelegate.back relies on its own _activePages, which is empty for
+      // delegates whose UI is rendered by a user-supplied
+      // Navigator(onGenerateRoute: ...) — so canBack is false and back is
+      // a no-op. Pop through the NavigatorState directly.
+      searchDelegate(id).navigatorKey.currentState?.pop(result);
+      return;
     }
     if (canPop) {
       if (searchDelegate(id).canBack == true) {
