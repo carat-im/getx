@@ -31,8 +31,8 @@ class GetPage<T> extends Page<T> {
   // @override
   // final LocalKey? key;
 
-  // @override
-  // RouteSettings get settings => this;
+  @override
+  RouteSettings get settings => this;
 
   @override
   final Object? arguments;
