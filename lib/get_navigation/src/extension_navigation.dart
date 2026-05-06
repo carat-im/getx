@@ -1088,11 +1088,12 @@ extension GetNavigationExt on GetInterface {
     GetDelegate _key;
     if (k == null) {
       _key = Get.rootController.rootDelegate;
-    } else {
-      if (!keys.containsKey(k)) {
-        throw 'Route id ($k) not found';
-      }
+    } else if (keys.containsKey(k)) {
       _key = keys[k]!;
+    } else if (keys.containsKey(k.toString())) {
+      _key = keys[k.toString()]!;
+    } else {
+      throw 'Route id ($k) not found';
     }
 
     // if (_key.listenersLength == 0 && !testMode) {
