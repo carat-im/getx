@@ -763,6 +763,17 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
     //Returning false will cause the entire app to be popped.
     final wasPopup = await handlePopupRoutes(result: result);
     if (wasPopup) return true;
+
+    // Delegate to the Navigator's maybePop so that the topmost route's
+    // PopScope / PopEntry are consulted (matches the behavior of
+    // PopNavigatorRouterDelegateMixin.popRoute). This is what lets
+    // NavigatorPopHandler intercept system back / Android predictive back
+    // for nested Navigators, and lets per-route PopScope handle confirms.
+    final navigator = navigatorKey.currentState;
+    if (navigator != null && await navigator.maybePop()) {
+      return true;
+    }
+
     final _popped = await _pop(popMode ?? backButtonPopMode, result);
     refresh();
     if (_popped != null) {
