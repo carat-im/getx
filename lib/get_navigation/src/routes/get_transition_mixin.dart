@@ -314,8 +314,14 @@ Cannot read the previousTitle for a route that has not yet been installed''',
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
+    // Carat patch: restrict the back-swipe recognizer to the left-edge
+    // gesture-width zone (iOS Cupertino convention). Without this, the
+    // route's full-screen `Positioned.fill` HorizontalDragGestureRecognizer
+    // wins over horizontal lists / PageViews / WebView vertical scroll
+    // after Flutter 3.38 made the gesture arena more aggressive.
     return buildPageTransitions<T>(
-        this, context, animation, secondaryAnimation, child);
+        this, context, animation, secondaryAnimation, child,
+        limitedSwipe: true);
   }
 
   @override
