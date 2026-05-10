@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../get_core/get_core.dart';
 import '../../../../instance_manager.dart';
@@ -274,8 +274,17 @@ class _RouteData {
     return _RouteData(
       name: _extractRouteName(route),
       isGetPageRoute: route is GetPageRoute,
-      isDialog: route is GetDialogRoute,
-      isBottomSheet: route is GetModalBottomSheetRoute,
+      // Carat patch: also recognise Flutter's stock ModalBottomSheetRoute
+      // (`showModalBottomSheet`) and DialogRoute (`showDialog`). Without
+      // this, `Get.isBottomSheetOpen` / `isDialogOpen` stays false for
+      // those sheets, and `Get.back()` falls through to GetDelegate.back
+      // which only mutates _activePages — the modal route on the
+      // Navigator stack stays open. Regressed after the recent
+      // GetDelegate.back tightening (commits 9602693 / af40264 /
+      // 4c31f35) removed the side-effect that used to dismiss it.
+      isDialog: route is GetDialogRoute || route is DialogRoute,
+      isBottomSheet:
+          route is GetModalBottomSheetRoute || route is ModalBottomSheetRoute,
     );
   }
 }
