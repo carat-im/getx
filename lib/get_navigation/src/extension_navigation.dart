@@ -815,10 +815,15 @@ extension GetNavigationExt on GetInterface {
     bool canPop = true,
     int? id,
   }) {
-    //TODO: remove this when change own api to Dialog and BottomSheets
-    //to declarative way
+    // Dialog / bottom-sheet routes (both GetX-flavoured and stock Flutter,
+    // since `c45456b` taught `isBottomSheetOpen` / `isDialogOpen` to
+    // recognise the latter) aren't tracked in GetDelegate's `_activePages`,
+    // so we pop them through the raw NavigatorState. The result must be
+    // forwarded — without it, any `Get.back(result:)` issued while a modal
+    // is on the stack (e.g. a detail screen pushed on top of a bottom
+    // sheet) silently delivers `null` to its `await Get.toNamed` caller.
     if (isDialogOpen! || isBottomSheetOpen!) {
-      searchDelegate(id).navigatorKey.currentState?.pop();
+      searchDelegate(id).navigatorKey.currentState?.pop(result);
       return;
     }
 
