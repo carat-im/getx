@@ -107,11 +107,21 @@ class GetListenable<T> extends ListNotifierSingle implements RxInterface<T> {
 
   StreamController<T> get subject {
     if (_controller == null) {
-      _controller =
-          StreamController<T>.broadcast(onCancel: addListener(_streamListener));
+      // The `_streamListener` bridges `_updaters` → broadcast stream.
+      // We register it once for the GetListenable's lifetime and remove
+      // it explicitly in `close()`. The previous implementation tied its
+      // lifetime to `broadcast.onCancel`, which fires whenever the last
+      // stream subscriber cancels — and because `_controller` stays
+      // cached, a subsequent `listen()` would attach to a controller
+      // whose `_streamListener` had already been removed, silently
+      // dropping all future value changes for `ever()` / `listen()`
+      // callers. Symptom: a State widget that mounts → unmounts →
+      // re-mounts and re-runs `ever()` on the same Rx never fires on
+      // value changes, while `Obx` (which uses `addListener` directly)
+      // keeps working.
+      addListener(_streamListener);
+      _controller = StreamController<T>.broadcast();
       _controller?.add(_value);
-
-      ///TODO: report to controller dispose
     }
     return _controller!;
   }
