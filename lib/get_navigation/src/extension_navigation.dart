@@ -851,12 +851,23 @@ extension GetNavigationExt on GetInterface {
       searchDelegate(id).navigatorKey.currentState?.pop(result);
       return;
     }
+    // Route the pop through the root NavigatorState rather than
+    // `GetDelegate.back` directly. The delegate's path goes
+    // `_popWithResult` → `refresh()`, which rebuilds the declarative
+    // `Navigator(pages: ...)` and discards the top page outright —
+    // bypassing the route's `didPop()` and therefore any
+    // `LocalHistoryEntry` installed on it. Flutter's `showBottomSheet`
+    // (persistent BottomSheet) registers exactly such an entry on the
+    // hosting ModalRoute so back-button / Navigator.pop close the sheet
+    // first while the underlying screen stays put. Going through
+    // NavigatorState.pop runs the route's `didPop`, which pops the
+    // LocalHistoryEntry first; `GetDelegate._onPopVisualRoute` then
+    // keeps `_activePages` in sync once didPop actually returns true.
+    final state = searchDelegate(id).navigatorKey.currentState;
     if (canPop) {
-      if (searchDelegate(id).canBack == true) {
-        searchDelegate(id).back<T>(result);
-      }
+      if (state?.canPop() == true) state?.pop(result);
     } else {
-      searchDelegate(id).back<T>(result);
+      state?.pop(result);
     }
   }
 
