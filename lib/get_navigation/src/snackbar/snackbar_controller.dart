@@ -36,6 +36,13 @@ class SnackbarController {
   /// The animation itself is exposed by the [animation] property.
   late final AnimationController _controller;
 
+  /// True once [_configureSnackBarDisplay] has run and [_controller] is
+  /// initialised. Queued-but-not-yet-shown snackbars stay false — guards
+  /// [_removeEntry] / [_removeOverlay] against `LateInitializationError`
+  /// when `cancelAllSnackbars()` reaches a snackbar that never got its
+  /// turn in the queue.
+  bool _displayed = false;
+
   SnackbarStatus? _currentStatus;
 
   final _overlayEntries = <OverlayEntry>[];
@@ -112,6 +119,7 @@ class SnackbarController {
     assert(!_transitionCompleter.isCompleted,
         'Cannot configure a snackbar after disposing it.');
     _controller = _createAnimationController();
+    _displayed = true;
     _configureAlignment(snackbar.snackPosition);
     _snackbarStatus = snackbar.snackbarStatus;
     _filterBlurAnimation = _createBlurFilterAnimation();
@@ -320,6 +328,15 @@ class SnackbarController {
 
     _cancelTimer();
 
+    // Queued-but-not-yet-shown snackbar: _controller was never
+    // initialised. Just complete the transition future so the awaiter
+    // inside _SnackBarQueue._addJob unblocks and the snackbar can be
+    // removed from _snackbarList without touching the late field.
+    if (!_displayed) {
+      if (!_transitionCompleter.isCompleted) _transitionCompleter.complete();
+      return;
+    }
+
     if (_wasDismissedBySwipe) {
       Timer(const Duration(milliseconds: 200), _controller.reset);
       _wasDismissedBySwipe = false;
@@ -337,6 +354,13 @@ class SnackbarController {
 
     assert(!_transitionCompleter.isCompleted,
         'Cannot remove overlay from a disposed snackbar');
+    // Same guard as _removeEntry — never-shown snackbars have no
+    // controller to dispose.
+    if (!_displayed) {
+      _overlayEntries.clear();
+      if (!_transitionCompleter.isCompleted) _transitionCompleter.complete();
+      return;
+    }
     _controller.dispose();
     _overlayEntries.clear();
     _transitionCompleter.complete();
