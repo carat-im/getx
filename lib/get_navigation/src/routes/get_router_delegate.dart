@@ -91,9 +91,18 @@ class GetDelegate extends RouterDelegate<RouteDecoder>
       final toCheck = _activePages[_activePages.length - 2];
       final resMiddleware = await runMiddleware(toCheck);
       if (resMiddleware == null) return null;
+      // `runMiddleware` suspends on a microtask boundary even when there
+      // are no middlewares to run — between that suspension and the
+      // resume below, another navigation op (sibling Navigator.pop /
+      // Get.toNamed inside a bottom-sheet handler, predictive-back, etc.)
+      // can shrink `_activePages` underneath us. Without this re-check
+      // the next two indexed accesses can land on `[-1]` and throw
+      // `RangeError (index): Only valid value is 0: -1`.
+      if (_activePages.length < 2) return null;
       _activePages[_activePages.length - 2] = resMiddleware;
     }
 
+    if (index < 0 || index >= _activePages.length) return null;
     final completer = _activePages.removeAt(index).route?.completer;
     if (completer?.isCompleted == false) completer!.complete(result);
 
